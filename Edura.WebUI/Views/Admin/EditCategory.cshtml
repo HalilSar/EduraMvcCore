@@ -1,0 +1,172 @@
+﻿@model AdminEditCategoryModel
+@*Sayfanın modeli ne olacak --> "Model oluşturduğumuz, AdminEditCategoryModel."*@
+@{
+    ViewData["Title"] = "EditCategory";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@*Form oluşturduk aşağıda cardtan, zamanımız yitirelim malumattan. *@
+<div class="card">
+    <div class="card-header">
+        Edit Category
+    </div>
+    @*"card-header" --> KART HEDIR bize carda başlık eklememize yardım eder.*@
+    <form asp-controller="Admin" asp-action="EditCategory" method="post">
+        @*Form oluşturduktan sonra tag-helperlarla asdp-controller, asp-action ve method=post girmekteyiz.Tek malumattan genel yargı kurmak mantıksız olsa da böyle bir kullanım mevcut*@
+        @*card badisini formun içine girdik.*@
+        <div class="card-body">
+            @*Tokınları Administron işlemlerinde kullanırız genel olarak*@
+            @Html.AntiForgeryToken()
+            <div class="text-danger" asp-validation-summary="All"></div>
+            @*asp-validation-summary="All" ne demek?*@
+            <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
+            @*CategoryId hidden yani son kullanıcı tarafından görünemeyeck bu categoryıd ne bizim modelimizdeki CategoryId*@
+            <div class="form-group">
+                <label asp-for="CategoryName"></label>
+                <input asp-for="CategoryName" class="form-control" />
+                @*CategoryName ekleme alanı*@
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Save</button>
+
+        </div>
+    </form>
+</div>
+@*Formun altına bir çizgi ekleyelim VE categorinin altındaki ürünleri sıralandırabiliriz.*@
+<hr />
+<div class="card">
+    <div class="card-header">
+        Products
+    </div>
+
+    @if (Model.Products.Count == 0) // eğer ürün adedi sıfıra eşit se 
+    {
+        <div class="alert alert-primary" role="alert">
+            No Products
+        </div>
+    }
+    else
+    {
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Image</th>
+                    <th>ProductName</th>
+                    <th>IsApproved</th>
+                    <th>IsHome</th>
+                    <th>IsFeatured</th>
+                    <th style="width:155px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model.Products)
+                {
+                    <tr>
+                        <th>@item.ProductId</th>
+                        <td>
+                            <img src="~/images/products/tn/@item.Image" width="60" />
+                        </td>
+                        <td>@item.ProductName</td>
+                        <td>
+                            @if (item.IsApproved)
+                            {
+                                <span data-feather="check-square"></span>
+                            }
+                            else
+                            {
+                                <span data-feather="x-square"></span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.IsHome)
+                            {
+                                <span data-feather="check-square"></span>
+                            }
+                            else
+                            {
+                                <span data-feather="x-square"></span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.IsFeatured)
+                            {
+                                <span data-feather="check-square"></span>
+                            }
+                            else
+                            {
+                                <span data-feather="x-square"></span>
+                            }
+                        </td>
+                        <td>
+                            <form asp-action="RemoveFromCategory" asp-controller="Admin" method="post">
+                                <input type="hidden" id="CategoryId" name="CategoryId" value="@Model.CategoryId" />
+                                <input type="hidden" id="ProductId" name="ProductId" value="@item.ProductId" />
+                                <button type="submit" class="btn btn-danger btn-sm delete">Remove</button>
+                                @*Remove dediğimizde ürünü kaldırmıyor, sadece ürünle kategori arasındaki ilişkiyi kırıyor. *@
+                                @* Çalışman bittiğinde bu aşamada hangi sayfalar yaratıldı ve hangileri oluşturuldu. Bunları kontrol et.*@                               
+                            </form>
+
+                            <button class="btn btn-primary btn-sm">Edit</button>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+    }
+
+    <div class="card-footer">
+        <a class="btn btn-primary" asp-controller="Admin" asp-action="AddProduct">Create</a>
+    </div>
+
+</div>
+@* Kayıt işlemini aktif hale getirdikten sonra delete işlemini aktif hale getirelim. Peki Categoriden ürün silmek ne anlama gelir biz sadece categoriden ürün silmek istiyoruz. Ürünü database tablosunda değil(Product tablosu) Peki, çoka çok ilişkisel tablosunda o kaydı silmemiz yeterli.*@
+@*İlk başta bu sayfanın post kısmını controllerda aktif edelim.*@
+@*Remove metodu kullanırken ajax aracılığıyla action metoduna ulaşayım. Asekron bir işlem yapmıyoruz. İşlemimiz senkron bir işlem.ben ajax sayesinde yani jquery yardımıyla bu metoda ulaşacağım ve remove ile ben buradw sildiğim zaman sayfayı yaniden yüklememe gerek kalmaz. Kullanıcı bu ürünü tekrar burada görmez.Dolaysıyla veri tabanına baktığınızda bu ürün burada olmaz  *@
+@*Ajax oluşumu secxtion ile scripts oluştur. Jqueryye bak.*@
+@section scripts
+    {
+    <script>
+//jquery aracılığıyla delete butonuna tıkalandığı anda.  event.preventDefault(); ile sayfanın postback olmasını keselim. HttpRequesti ajaxla gönderecem çünkü.
+        $(".delete").click(function (event) {
+
+            event.preventDefault();
+
+            var form = $(this).parent();//this dersek deleteni referansını almış oluyourz. Ben delete butonunu parentine gidersem. Burada parent form delete içinde bulunduğu. Eğer parent çalıştırmaz isek butonu almış oluruz.
+            var row = form.parent("td").parent("tr");// consoloe.Log test ediyoruz.
+// row değişkeninde formun parentına gittik ve paretntın parentına gittik. "Fronend işlemleri"
+            var token = $('input[name="__RequestVerificationToken"]', form).val();  // " __RequestVerificationToken " bunu çıkan ekranı incele yapıp aldık. Bu ifadeni value deyip değerini alalım. Neyin valını alcaz referansını aldığımız form sayfasının  
+            var data = { categoryId: $("#CategoryId", form).val(), productId: $("#ProductId", form).val() }; // parentı form olan categoryıd ve productId alıyoz.  Biz burada aslında json data oluşturuyoz. Biz josnları küçük harfle başlatıp arka tarafta eşleşmelerini Büyük harf ile eşleştiyoruz.
+            //categoryId ve "#CategoryId gibi.
+            var dataWithToken = $.extend(data, { '__RequestVerificationToken': token });
+            // Token ile biz bunu birleştirelim>> Veri tabanına gönderilecek bilgileri şu anda token ile oluşturmuş olduk.
+
+            $.ajax({// Burada ajaxın  requestini olştur:
+                url: form.attr("action"), // urlemiz form içerisinden attributu action
+                data: dataWithToken, // 
+                type: "Post", // type post
+                beforeSend: function () { // loader göster
+                    $("#ajax-loader").show();
+                },
+                complete: function () { // tamamlanınca sakla
+                    $("#ajax-loader").hide();
+                },
+                success: function () {//göredl olarak silsem yeterli
+                    row.remove();
+                },
+                error: function () {// hata olduğunda Http200 gelmediğinde
+
+                }
+
+            });// Şimdi benim gidip AdminControllerda ilgili action metodu oluşturmam gerekiyo
+
+        });
+
+
+    </script>
+}
+

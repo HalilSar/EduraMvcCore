@@ -1,0 +1,68 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\SadıkEdura\\17-Administration - Catalog - 3\\Edura\\Edura.WebUI\\Edura.WebUI.csproj": {}
+  },
+  "projects": {
+    "D:\\SadıkEdura\\17-Administration - Catalog - 3\\Edura\\Edura.WebUI\\Edura.WebUI.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\SadıkEdura\\17-Administration - Catalog - 3\\Edura\\Edura.WebUI\\Edura.WebUI.csproj",
+        "projectName": "Edura.WebUI",
+        "projectPath": "D:\\SadıkEdura\\17-Administration - Catalog - 3\\Edura\\Edura.WebUI\\Edura.WebUI.csproj",
+        "packagesPath": "C:\\Users\\huriye\\.nuget\\packages\\",
+        "outputPath": "D:\\SadıkEdura\\17-Administration - Catalog - 3\\Edura\\Edura.WebUI\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\huriye\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.0": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.0": {
+          "dependencies": {
+            "Microsoft.AspNetCore.All": {
+              "target": "Package",
+              "version": "[2.0.3, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.0.0, )",
+              "autoReferenced": true
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}
